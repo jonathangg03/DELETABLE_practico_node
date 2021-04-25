@@ -1,14 +1,8 @@
-Estructuras de datos para nuestro proyecto
+Estructura inicial del proyecto: API y rutas
 
--En este proyecto haremos una red social, compuesta por usuarios y contenido.
--En esta clase explicamos la estructura de los datos.
--En este caso usaremos una DB SQL, ya que en las NOSQL no podemos hacer relaciones, solo
-  referencias a datos.
--Podemos ver el diagrama en la imagen, lo que podemos notar es lo siguiente:
-    .La tabla de autenticación es una entidad totalmente aparte, para no exponer datos
-      sensibles.
-    -Un usuario puede tener muchos user_follow, y un user_follow puede tener muchos 
-      usuarios (muchos a muchos (n a n)).
-    -Relacion entre usuarios y post: 1 a n.
-    -Relacion entre usuarios y user_like: 1 a n.
-    -Relación entre post y user_like: 1 a n.
+-Por ahora, tendremos varios archivos y carpetas:
+  .En la raíz, tendremos las carpetas, y el archivo de config. donde
+    configuramos las variables que usaremos en multiples archivos.
+    Tendremos la carpeta network con las respuestas,
+  .En la carpeta 'api' tendremos todo, el index será el equivalente a 
+    server en el curso pasado, y los componentes.

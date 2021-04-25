@@ -1,8 +1,8 @@
-Estructura inicial del proyecto: API y rutas
+Aislar el código de la base de datos
 
--Por ahora, tendremos varios archivos y carpetas:
-  .En la raíz, tendremos las carpetas, y el archivo de config. donde
-    configuramos las variables que usaremos en multiples archivos.
-    Tendremos la carpeta network con las respuestas,
-  .En la carpeta 'api' tendremos todo, el index será el equivalente a 
-    server en el curso pasado, y los componentes.
+-Crearemos en la raíz la carpeta store, donde guardaremos las conexiones 
+  a todas las DB.
+-Creamos un archivo dummy donde simularemos metodos aplicados a las DB.
+-Como las DB tendrán tablas, los metodos serán distintos.
+-Las conexiones si serán las mismas, donde el controller traiga al dummy, 
+  y el network al controller.

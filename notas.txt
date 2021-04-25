@@ -1,8 +1,21 @@
-Aislar el código de la base de datos
+Rutas para usuarios
 
--Crearemos en la raíz la carpeta store, donde guardaremos las conexiones 
-  a todas las DB.
--Creamos un archivo dummy donde simularemos metodos aplicados a las DB.
--Como las DB tendrán tablas, los metodos serán distintos.
--Las conexiones si serán las mismas, donde el controller traiga al dummy, 
-  y el network al controller.
+-Haremos que el controlador no requiera que esa siempre sea su DB.
+-Esto es util para testing, en caso de que no queramos que el controlador
+  ataque directamente a la DB, sino a un mock que hayamos creado, pej.
+-Lo que haremos será crear un archivo 'index.js' en el componente, este
+  traerá el controlador y el store. Haremos el controller como un metodo,
+  y le damos el store por parametro, esto es lo que exportamos.
+-Haciendo eso, debemos reestructurar el controller, para que lo que 
+  exporte sea una función y pueda recibir el store como parametro.
+-Haciendo eso, validamos que ese parametro venga, y sí no viene, ahi
+  importaremos el store (dummy). Para eso, el parametro deberíamos
+  guardarlo en una variable, para hacer esa validación.
+-Ahora, no usaremos el store importado, sino esa variable.
+-El resto es igual.
+
+-En este curso, manejaremos los metodos diferentes, no con promesas, sino
+  con async-await.
+-Para eso, solo definimos en el store las funciones como asincronas.
+-Con eso, estas nos retornarán promesas, el controller lo dejamos igual,
+  y en el store es que manejamos esas promesas.

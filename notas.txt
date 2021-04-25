@@ -1,17 +1,14 @@
-Arquitectura de un backend complejo
+Estructuras de datos para nuestro proyecto
 
--En esta clase se repasa la arquitectura que se vió en el curso anterior, pero con cambios.
--El archivo store va a ser muy similar en todos los componentes, entonces haremos solo uno
-  que se conecte con cada controlador, y con la DB.
--Para que esto funcione, la arquitectura debe ser muy clara, para no reescribir archivos.
--Una forma de hacerlo es pensar en la estructura de nuestras carpetas.
--En el proyecto lo trabajaremos así:
-  .Store: Accesible por todos, estando en la raíz.
-  .Network: Carpeta accesible por todos, estando en la raíz.
-  .Config: Accesible por todos, estando en la raíz.
-  .Microservicios:
-    -Network: Conexiones con las rutas.
-    -Controller: Lógica de negocio.
-    -Secure: Temas de seguridad.
-    -Index: Como se interactua con el microservicio, y como este se expone hacia afuera,
-      normalmente se expone como un servicio http.
+-En este proyecto haremos una red social, compuesta por usuarios y contenido.
+-En esta clase explicamos la estructura de los datos.
+-En este caso usaremos una DB SQL, ya que en las NOSQL no podemos hacer relaciones, solo
+  referencias a datos.
+-Podemos ver el diagrama en la imagen, lo que podemos notar es lo siguiente:
+    .La tabla de autenticación es una entidad totalmente aparte, para no exponer datos
+      sensibles.
+    -Un usuario puede tener muchos user_follow, y un user_follow puede tener muchos 
+      usuarios (muchos a muchos (n a n)).
+    -Relacion entre usuarios y post: 1 a n.
+    -Relacion entre usuarios y user_like: 1 a n.
+    -Relación entre post y user_like: 1 a n.

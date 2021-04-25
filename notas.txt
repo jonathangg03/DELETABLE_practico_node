@@ -1,0 +1,17 @@
+Arquitectura de un backend complejo
+
+-En esta clase se repasa la arquitectura que se vió en el curso anterior, pero con cambios.
+-El archivo store va a ser muy similar en todos los componentes, entonces haremos solo uno
+  que se conecte con cada controlador, y con la DB.
+-Para que esto funcione, la arquitectura debe ser muy clara, para no reescribir archivos.
+-Una forma de hacerlo es pensar en la estructura de nuestras carpetas.
+-En el proyecto lo trabajaremos así:
+  .Store: Accesible por todos, estando en la raíz.
+  .Network: Carpeta accesible por todos, estando en la raíz.
+  .Config: Accesible por todos, estando en la raíz.
+  .Microservicios:
+    -Network: Conexiones con las rutas.
+    -Controller: Lógica de negocio.
+    -Secure: Temas de seguridad.
+    -Index: Como se interactua con el microservicio, y como este se expone hacia afuera,
+      normalmente se expone como un servicio http.

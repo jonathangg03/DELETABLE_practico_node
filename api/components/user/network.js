@@ -17,4 +17,25 @@ router.get("/:id", (req, res) => {
     .catch((err) => response.error(req, res, err.message, 500));
 });
 
+router.post("/", (req, res) => {
+  controller
+    .upsert(req.body)
+    .then((data) => response.success(req, res, data, 201))
+    .catch((err) => response.error(req, res, err.message, 500));
+});
+
+router.put("/", (req, res) => {
+  controller
+    .upsert(req.body)
+    .then((data) => response.success(req, res, data, 201))
+    .catch((err) => response.error(req, res, err.message, 500));
+});
+
+// router.delete("/:id", () => {
+//   controller
+//     .remove(req.params.id)
+//     .then(() => response.success(req, res, "Se eliminó correctamente", 200))
+//     .catch((err) => response.error(req, res, err.message, 500));
+// });
+
 module.exports = router;

@@ -1,21 +1,26 @@
-Rutas para usuarios
+Documentación de nuestra API
 
--Haremos que el controlador no requiera que esa siempre sea su DB.
--Esto es util para testing, en caso de que no queramos que el controlador
-  ataque directamente a la DB, sino a un mock que hayamos creado, pej.
--Lo que haremos será crear un archivo 'index.js' en el componente, este
-  traerá el controlador y el store. Haremos el controller como un metodo,
-  y le damos el store por parametro, esto es lo que exportamos.
--Haciendo eso, debemos reestructurar el controller, para que lo que 
-  exporte sea una función y pueda recibir el store como parametro.
--Haciendo eso, validamos que ese parametro venga, y sí no viene, ahi
-  importaremos el store (dummy). Para eso, el parametro deberíamos
-  guardarlo en una variable, para hacer esa validación.
--Ahora, no usaremos el store importado, sino esa variable.
--El resto es igual.
+-Es buena practica documentar nuestra api con todo lo que hará.
+-Para eso usaremos swagger: https://editor.swagger.io/
+-Es mejor ver su documentación para saber las opciones que tenemos.
+-Cuando terminemos de crear la documentación, en File > Convert and save as JSON, nos guarda
+  un .json en donde queramos con esa documentación. Lo moveremos en la carpeta 'api'.
+-Para poder mostrarla en una ruta de nuestra página, iremos al index, la servimos en una 
+  ruta con use(), como 2do parametro, usaremos el elemento serve, de una dependencia que 
+  tenemos que instalar, llamada 'swagger-ui-express', como 3er param. usamos tambien su 
+  metodo setup(), y como parametro, el .json descargado.
 
--En este curso, manejaremos los metodos diferentes, no con promesas, sino
-  con async-await.
--Para eso, solo definimos en el store las funciones como asincronas.
--Con eso, estas nos retornarán promesas, el controller lo dejamos igual,
-  y en el store es que manejamos esas promesas.
+-Metodos del index:
+  -En el network, podemos notar cosas diferentes que podemos hacer:
+    .Podemos tener varios metodos del mismo tipo, en donde usemos un 'params' para cambiar
+      la ruta, pero que sea el mismo metodo.
+    .El mismo metodo del controller puede usarse en distintos metodos del router, tambien 
+      se pueden usar distintos parametros para ellos.
+    .Como parametro de algun metodo del parametro, podemos pasar por ejemplo el body, 
+      haciendo que en el controller manipulemos lo que queramos de ese body.
+
+nanoid:
+  -nanoid es una dependencia de las más usadas para generar ids.
+  -Cuando vayamos a dar un valor, usamos esta dependencia, como un metodo, lo damos como
+    valor.
+  -Regularmente esto lo hacemos en el controller.

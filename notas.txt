@@ -1,40 +1,24 @@
-JWT: Gestión de acceso
+Autenticación: registro
 
--Como vemos en el programa hasta ahora, todos podemos acceder a editar un usuario, cuando
-  lo correcto sería que cada usuario solo pueda editar su info.
--Para ello existe la autenticación, que no debe confundirse con permisos.
--Mientras la capa de autenticación nos reconoce a nosotros dentro del BE, los permisos
-  definen lo que nosotros podemos hacer.
--Los permisos se verán más adelante.
--Para la autenticación usaremos los JWT.
+-El flujo será el siguiente: Ingresamos usuario y pass > logueamos > devolvemos el
+  token.
+-Pero antes de loguear, debemos autenticar al usuario.
+-Una parte importante a tener en cuenta es el password.
 
-JWT:
-  -Las JWT tendrán un cuerpo, una cabecera y una firma.
-  -Esta info se cifrará, quedando una sola cadena de texto grande.
-  -Esta se puede descifrar con el mismo algoritmo con el que se cifró.
-  -Para ver como se compone iremos al sitio jwt.io.
-  -Iremos a la parte que diga Decoded/Encoded.
-  -En decoded vendrá la composición de ese JWT, y en Encoded, el JWT generado.
+Password:
+  -No se guardará dentro del propio usuario.
+  -Porque de esta forma podemos separar los usuarios que tienen acceso a la API y pueden
+    hacer peticiones, y la entidad usuario.
+  -Estas 2 sí irán muy relacionadas, y cuando creemos un usuario, debemos crear nuestra
+    entidad de acceso, pero no serán la misma.
+  -Esto ayuda a quitarnos el problema de que, al solicitar un usuario, no tengamos que 
+    esconder los datos sensibles, ya que estos irán en otra entidad.
+  -Entonces, lo que debemos hacer es crear un componente para autenticación, que almacene
+    solo la información relevante para eso: id, user, pass.
+  -En el controller, crearemos el upsert, y colocaremos los datos relevantes.
+  -Este lo ejecutamos dentro del controller del componente de user, igualmente en el upsert, 
+    le daremos a su parametro los valores relevantes, que deberían ser generados dentro de 
+    esta función upsert del controller.
 
-Composición del JWT:
-  -Header: {"alg": "HS256", "typ": "JWT"}:
-    .alg: Algoritmo de codificación a usar.
-    .typ: Tipo de token.
-    .Estas 2 seguro que no las vamos a querer cambiar.
-  -Payload (data): {"sub": "12345", "name": "John", "iat": 1567364}
-    .sub: Id unico del usuario. Es un elemento unico, y que no será alterado.
-    .name: El nombre del usuario, este se coloco como ejemplo de toda la info. que
-      podemos poner.
-    .iat: Segundos desde que el token fue creado. Recordar que el token se crea para
-      autenticar a un usuario, y este se puede vencer. Esto nos ayuda para cuando 
-      queramos delimitar cuanto tiempo el token será valido.
-  -Firma de verificación: 
-  HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), your-256-bit-secret)
-    .Este metodo es para cuando el algoritmo es HS256.
-    .Se hace el encoding (generar el string) de la cabecera, del payload, y de nuestro
-      secret de 256 bits. Este secreto es una especie de clave para todos nuestros tokens,
-      suele ser una clave secreta de la persona que hace el backend. Normalmente es
-      larga para que cueste adivinarla.
-
--Este es el algoritmo de cifrado más usado, cuando exista un algoritmo de cifrado, 
-  debemos usarlo, y no crear nuevos.
+-De esta forma, sí hacemos log a la parte de la DB dummy, en la entidad user no estará el
+  password, en auth sí, y ambas deben tener el mismo ID.

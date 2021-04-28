@@ -1,26 +1,40 @@
-Documentación de nuestra API
+JWT: Gestión de acceso
 
--Es buena practica documentar nuestra api con todo lo que hará.
--Para eso usaremos swagger: https://editor.swagger.io/
--Es mejor ver su documentación para saber las opciones que tenemos.
--Cuando terminemos de crear la documentación, en File > Convert and save as JSON, nos guarda
-  un .json en donde queramos con esa documentación. Lo moveremos en la carpeta 'api'.
--Para poder mostrarla en una ruta de nuestra página, iremos al index, la servimos en una 
-  ruta con use(), como 2do parametro, usaremos el elemento serve, de una dependencia que 
-  tenemos que instalar, llamada 'swagger-ui-express', como 3er param. usamos tambien su 
-  metodo setup(), y como parametro, el .json descargado.
+-Como vemos en el programa hasta ahora, todos podemos acceder a editar un usuario, cuando
+  lo correcto sería que cada usuario solo pueda editar su info.
+-Para ello existe la autenticación, que no debe confundirse con permisos.
+-Mientras la capa de autenticación nos reconoce a nosotros dentro del BE, los permisos
+  definen lo que nosotros podemos hacer.
+-Los permisos se verán más adelante.
+-Para la autenticación usaremos los JWT.
 
--Metodos del index:
-  -En el network, podemos notar cosas diferentes que podemos hacer:
-    .Podemos tener varios metodos del mismo tipo, en donde usemos un 'params' para cambiar
-      la ruta, pero que sea el mismo metodo.
-    .El mismo metodo del controller puede usarse en distintos metodos del router, tambien 
-      se pueden usar distintos parametros para ellos.
-    .Como parametro de algun metodo del parametro, podemos pasar por ejemplo el body, 
-      haciendo que en el controller manipulemos lo que queramos de ese body.
+JWT:
+  -Las JWT tendrán un cuerpo, una cabecera y una firma.
+  -Esta info se cifrará, quedando una sola cadena de texto grande.
+  -Esta se puede descifrar con el mismo algoritmo con el que se cifró.
+  -Para ver como se compone iremos al sitio jwt.io.
+  -Iremos a la parte que diga Decoded/Encoded.
+  -En decoded vendrá la composición de ese JWT, y en Encoded, el JWT generado.
 
-nanoid:
-  -nanoid es una dependencia de las más usadas para generar ids.
-  -Cuando vayamos a dar un valor, usamos esta dependencia, como un metodo, lo damos como
-    valor.
-  -Regularmente esto lo hacemos en el controller.
+Composición del JWT:
+  -Header: {"alg": "HS256", "typ": "JWT"}:
+    .alg: Algoritmo de codificación a usar.
+    .typ: Tipo de token.
+    .Estas 2 seguro que no las vamos a querer cambiar.
+  -Payload (data): {"sub": "12345", "name": "John", "iat": 1567364}
+    .sub: Id unico del usuario. Es un elemento unico, y que no será alterado.
+    .name: El nombre del usuario, este se coloco como ejemplo de toda la info. que
+      podemos poner.
+    .iat: Segundos desde que el token fue creado. Recordar que el token se crea para
+      autenticar a un usuario, y este se puede vencer. Esto nos ayuda para cuando 
+      queramos delimitar cuanto tiempo el token será valido.
+  -Firma de verificación: 
+  HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), your-256-bit-secret)
+    .Este metodo es para cuando el algoritmo es HS256.
+    .Se hace el encoding (generar el string) de la cabecera, del payload, y de nuestro
+      secret de 256 bits. Este secreto es una especie de clave para todos nuestros tokens,
+      suele ser una clave secreta de la persona que hace el backend. Normalmente es
+      larga para que cueste adivinarla.
+
+-Este es el algoritmo de cifrado más usado, cuando exista un algoritmo de cifrado, 
+  debemos usarlo, y no crear nuevos.

@@ -1,24 +1,41 @@
-Autenticación: registro
+Autenticación: login
 
--El flujo será el siguiente: Ingresamos usuario y pass > logueamos > devolvemos el
-  token.
--Pero antes de loguear, debemos autenticar al usuario.
--Una parte importante a tener en cuenta es el password.
+-Cuando realizamos un login es importante no guardar las contraseñas en plano, deben estar
+  cifradas.
+-Cuando los proyectos son grandes, el login se le puede delegar a un tercero (autenticación
+  con google, fb, twitter) visto en el curso de Passaport.
+-En esta clase 1ero haremos el login normal, luego con contraseñas cifradas.
+-Haremos que con la función de login, que nos retorne un token.
+-El componente que usaremos será el de autenticación.
 
-Password:
-  -No se guardará dentro del propio usuario.
-  -Porque de esta forma podemos separar los usuarios que tienen acceso a la API y pueden
-    hacer peticiones, y la entidad usuario.
-  -Estas 2 sí irán muy relacionadas, y cuando creemos un usuario, debemos crear nuestra
-    entidad de acceso, pero no serán la misma.
-  -Esto ayuda a quitarnos el problema de que, al solicitar un usuario, no tengamos que 
-    esconder los datos sensibles, ya que estos irán en otra entidad.
-  -Entonces, lo que debemos hacer es crear un componente para autenticación, que almacene
-    solo la información relevante para eso: id, user, pass.
-  -En el controller, crearemos el upsert, y colocaremos los datos relevantes.
-  -Este lo ejecutamos dentro del controller del componente de user, igualmente en el upsert, 
-    le daremos a su parametro los valores relevantes, que deberían ser generados dentro de 
-    esta función upsert del controller.
+Función query del store dummy:
+  -Tendrá como parametro la tabla (auth), y un objeto, el cual en el controller le daremos un 
+    elemento username, y como valor el username que colocaremos en el body.
+  -Traemos la tabla de autenticación, y necesitaremos el 1er key del objeto del 2do 
+    parametro (como se indicó, será username).
+  -Retornaremos la 1er posición de un filter, este nos devolverá donde el username de 
+    cada elemento sea igual al username del objeto del 2do param.
+  -Esto devolverá todo el objeto donde coincidan ambos username.
 
--De esta forma, sí hacemos log a la parte de la DB dummy, en la entidad user no estará el
-  password, en auth sí, y ambas deben tener el mismo ID.
+Función login del controller:
+  -Usaremos la función query, y le daremos como valor al objeto el username que nos vendrá 
+    del network.
+  -Sí el password de lo anterior es igual al del network, retornaremos un metodo sign(), 
+    de una nueva funcionalidad explicada en esta clase. Le daremos como parametro la 
+    resolución del query del dummy.
+  -En caso contrario, lanzaremos un error (ya que aquí no estamos trabajando con promesas).
+
+sign():
+  -Crearemos una nueva funcionalidad 'auth'. Para ello, creamos una nueva carpeta en la
+    raíz, llamada auth. Ahí, crearemos un index.
+  -Instalaremos 'jsonwebtoken' y lo importaremos.
+  -Exportaremos una función que simplemente retorne el metodo sign() de jwt.
+  -Le daremos como parametro el mismo que la función, que será el objeto dato en el
+    controller, y como 2do, un string con la clave secreta.
+  -Esto nos devolverá un token de autenticación.
+
+network:
+  -Llamará a la función de login, y el username y password los traeremos del body.
+  -Lo llamará en POST.
+
+-Recordar que debemos servir este componente en una ruta.

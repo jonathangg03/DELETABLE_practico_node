@@ -9,7 +9,7 @@ const db = {
 };
 
 const list = async (table) => {
-  return db[table];
+  return db[table] || [];
 };
 
 const get = async (table, id) => {
@@ -25,13 +25,20 @@ const upsert = async (table, data) => {
   console.log(db);
 };
 
-const remove = async (table, id) => {
-  return true;
-};
+async function query(table, queryObj) {
+  const col = await list(table); //trae la tabla auth
+  const keys = Object.keys(queryObj); //Nos trae el key del objeto queryObj, en este caso sería ['username']
+  const key = keys[0]; //username
+
+  return col.filter((item) => item[key] === queryObj[key])[0] || null;
+  //retorna el 1er elemento del array creado por filter
+  //item[key]: El username de cada objeto de la tabla auth
+  //queryObj[key]: El username del queryObject se le da valor en el network, y será el username que buscamos
+}
 
 module.exports = {
   list,
   get,
   upsert,
-  remove,
+  query,
 };

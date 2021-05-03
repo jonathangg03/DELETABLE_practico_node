@@ -1,41 +1,16 @@
-Autenticación: login
+Autenticación: cifrar contraseñas para evitar problemas de seguridad
 
--Cuando realizamos un login es importante no guardar las contraseñas en plano, deben estar
-  cifradas.
--Cuando los proyectos son grandes, el login se le puede delegar a un tercero (autenticación
-  con google, fb, twitter) visto en el curso de Passaport.
--En esta clase 1ero haremos el login normal, luego con contraseñas cifradas.
--Haremos que con la función de login, que nos retorne un token.
--El componente que usaremos será el de autenticación.
+-La dependencia más usada para poder cifrar contraseñas es bcrypt.
+-Esta la usaremos para cifrar y descifrar el pass para no guardarlo en limpio.
+-Esta hasheara el pass, y lo comparárá con el creado para ver sí es el correcto.
 
-Función query del store dummy:
-  -Tendrá como parametro la tabla (auth), y un objeto, el cual en el controller le daremos un 
-    elemento username, y como valor el username que colocaremos en el body.
-  -Traemos la tabla de autenticación, y necesitaremos el 1er key del objeto del 2do 
-    parametro (como se indicó, será username).
-  -Retornaremos la 1er posición de un filter, este nos devolverá donde el username de 
-    cada elemento sea igual al username del objeto del 2do param.
-  -Esto devolverá todo el objeto donde coincidan ambos username.
+-Para cifrar un password, usaremos el metodo hash(), con 2 params, el password y 
+  la cantidad de veces que se repetirá el algoritmo. Mientras más veces se repita 
+  más lento será generandolo, pero será más seguro. El metodo devuelve una promesa
+  con el pass cifrado.
+-Para comparar sí un hash es equivalente a un password, se usará el metodo compare,
+  que devuelve una promesa con un booleano indicando sí son equivaletes.
 
-Función login del controller:
-  -Usaremos la función query, y le daremos como valor al objeto el username que nos vendrá 
-    del network.
-  -Sí el password de lo anterior es igual al del network, retornaremos un metodo sign(), 
-    de una nueva funcionalidad explicada en esta clase. Le daremos como parametro la 
-    resolución del query del dummy.
-  -En caso contrario, lanzaremos un error (ya que aquí no estamos trabajando con promesas).
-
-sign():
-  -Crearemos una nueva funcionalidad 'auth'. Para ello, creamos una nueva carpeta en la
-    raíz, llamada auth. Ahí, crearemos un index.
-  -Instalaremos 'jsonwebtoken' y lo importaremos.
-  -Exportaremos una función que simplemente retorne el metodo sign() de jwt.
-  -Le daremos como parametro el mismo que la función, que será el objeto dato en el
-    controller, y como 2do, un string con la clave secreta.
-  -Esto nos devolverá un token de autenticación.
-
-network:
-  -Llamará a la función de login, y el username y password los traeremos del body.
-  -Lo llamará en POST.
-
--Recordar que debemos servir este componente en una ruta.
+-En el upsert, al colocar la contraseña, usaremos hash(). Eto
+-En el login, usaremos compare(), con el pass que viene del body y el del objeto
+  con los datos, y sí funciona, ahí realizaremos el sign() para traer el token.

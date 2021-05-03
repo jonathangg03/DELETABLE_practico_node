@@ -1,16 +1,55 @@
-Autenticación: cifrar contraseñas para evitar problemas de seguridad
+Autenticación: gestión de permisos
 
--La dependencia más usada para poder cifrar contraseñas es bcrypt.
--Esta la usaremos para cifrar y descifrar el pass para no guardarlo en limpio.
--Esta hasheara el pass, y lo comparárá con el creado para ver sí es el correcto.
+-Ahora lo que sigue es decifrar el token del usuario.
+-Con esto definimos sí un usuario puede, o no, editar un perfil.
+-Antes, debemos tener completo el reto de editar usuarios, esto se hará con la 
+  misma función de upsert. Lo haremos con put, y la función en el controller
+  será la misma de upser.
+-Vamos a definir el tema de autenticación en un archivo 'secure' en el componente 
+  'user'.
+-En el archivo de autenticación que guardamos en la raíz, crearemos las funciones
+  que nos ayudarán a hacer esa autenticación.
 
--Para cifrar un password, usaremos el metodo hash(), con 2 params, el password y 
-  la cantidad de veces que se repetirá el algoritmo. Mientras más veces se repita 
-  más lento será generandolo, pero será más seguro. El metodo devuelve una promesa
-  con el pass cifrado.
--Para comparar sí un hash es equivalente a un password, se usará el metodo compare,
-  que devuelve una promesa con un booleano indicando sí son equivaletes.
+Archivo de autenticación:
+  -Impotrtaremos el archivo auth.
+  -Exportaremos una función, está tiene como parametro 'action', que tendrá un
+    string con la acción a realizar.
+  -Dentro, definimos una función 'middleware', con los parametros req, res, y un
+    metodo next.
+  -Validaremos y haremos diferentes acciones dependiendo del valor de action.
+    .Sí es 'update', haremos el metodo own() del archivo de auth (ahora la
+      definimos).
+    .Tendrá como parametro la req, y el id traido del body de esa req.
+    .Sí no se comple ninguna opcion, por defecto haremos que se ejecute next().
+  -Retornaremos ese middleware.
 
--En el upsert, al colocar la contraseña, usaremos hash(). Eto
--En el login, usaremos compare(), con el pass que viene del body y el del objeto
-  con los datos, y sí funciona, ahí realizaremos el sign() para traer el token.
+-Archivo auth:
+  -La función 'own' vendrá de un objeto 'check', este tendrá solo esa por ahora.
+  -Esta trae por parametros la req y el 'owner'.
+  -Este metodo, por ahora lo que hará será capturar el resultado de una función
+    'decodeHeader', que tenga la req por parametro.
+  -Por ahora, solo imprimiremos ese resultado.
+  -La función 'decodeHeader' tendrá la req por parametro, así que capturaremos la 
+    cabecera authorization.
+  -Tamien traeremos la resolucion de 2 funciones a definir, getToken() y verify().
+  -getToken() recibirá la cabecera.
+  -Verify() recibiŕa ese token.
+  -Le daremos el resultado de ese verify por valor al elemento user de la req.
+  -El resultado de ese verify tambien lo retornamos.
+
+verify():
+  -Retornará el resultado del metodo verify() de jsonwebtoken.
+  -Ese lleva por parametro el token (traido del parametro de la función) y la 
+    frase secreta.
+
+getToken():
+  -Como indicamos, este tendrá por parametro la cabecera authorization.
+  -Sí esta no existe, eniamos un error, igualmente sí el index de 'Bearer ' de esta
+    es -1 (que no viene dentro de esa cabecera). Ya que en este caso, la cabecerá 
+    sería invalida.
+  -Retornaremos el token, que lo obtendrémos de la cabecera authorization, pero 
+    quitando el 'Bearer '.
+  -Recordemos que los token de autorización tendrán una estructura como esta:
+    'Bearer esf8swh83hw8eh', por eso debemos quitar el inicio, dejar solo el token.
+
+Finalmente, debemos exportar el objeto con los metodos (check).

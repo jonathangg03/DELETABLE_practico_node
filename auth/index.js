@@ -7,7 +7,11 @@ function sign(data) {
 }
 
 function verify(token) {
-  return jwt.verify(token, secret);
+  try {
+    return jwt.verify(token, secret);
+  } catch (error) {
+    throw new Error("Tenes un error");
+  }
 }
 
 function getToken(authorization) {
@@ -21,7 +25,7 @@ function getToken(authorization) {
     throw new Error("Token invalido");
   }
 
-  let token = authorization.replace("Bearer", ""); //Para quitar el Bearer y solo quedarnos con el token
+  let token = authorization.replace("Bearer ", ""); //Para quitar el Bearer y solo quedarnos con el token
   return token;
 }
 
@@ -29,7 +33,7 @@ function decodeHeader(req) {
   const authorization = req.headers.authorization || "";
   const token = getToken(authorization);
   const decoded = verify(token);
-
+  console.log(decoded);
   req.user = decoded;
 
   return decoded;
@@ -39,6 +43,10 @@ const check = {
   own: function (req, owner) {
     const decoded = decodeHeader(req);
     console.log(decoded);
+
+    if (decoded.id !== owner) {
+      throw new Error("No tienes autorización de hacer eso");
+    }
   },
 };
 

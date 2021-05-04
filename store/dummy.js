@@ -4,6 +4,8 @@ const db = {
     {
       id: "1",
       name: "Carlos",
+      username: "car29",
+      password: "1234",
     },
   ],
 };

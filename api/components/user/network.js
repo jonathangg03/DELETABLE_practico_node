@@ -1,4 +1,5 @@
 const express = require("express");
+const secure = require("./secure");
 const response = require("../../../network/response");
 const controller = require("./index");
 const router = express.Router();
@@ -24,7 +25,7 @@ router.post("/", (req, res) => {
     .catch((err) => response.error(req, res, err.message, 500));
 });
 
-router.put("/", (req, res) => {
+router.put("/", secure("update"), (req, res) => {
   controller
     .upsert(req.body)
     .then((data) => response.success(req, res, data, 201))

@@ -36,7 +36,7 @@ module.exports = (injectedStore) => {
       });
     }
 
-    return store.upsert(TABLA, user);
+    return store.upsert(TABLA, user, true);
   }
 
   // function remove(id) {

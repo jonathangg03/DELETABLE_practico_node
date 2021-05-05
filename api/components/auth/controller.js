@@ -16,7 +16,7 @@ module.exports = (injectedStore) => {
       if (sonIguales === true) {
         //Generar token
         console.log("token");
-        return auth.sign(data);
+        return auth.sign({ ...data });
       } else {
         throw new Error("Info invalida");
       }

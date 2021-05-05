@@ -1,70 +1,34 @@
-Base de datos real: MySQL
+Completando la base de datos
 
--Vamos a colocar todos los error, quitando los 'new Error()' y colocando el metodo de las
-  utils.
--Como estamos trayendo este midleware, en el network, en el error, ya no traeremos la 
-  respuesta, sino que colocaremos el next.
--Next será el 3er parametro de la función de cada metodo, y es un elemento que tiene cada
-  middleware.
--Se coloca este parametro, pero no como metodo.
--Esto, como usamos un middleware, tenemos que hacerlo con todos los errores de los network.
+-En esta clase vemos los metodos faltantes del store
+-Cuando en un query colocamos ?, esto hace referencia que, como 2do parametro del query ya
+  no vendrá el callback, sino el valor de ese ?, despues sí vendrá el callback.
+-Sí son varios, se les da valor en el 2do parametro igual, pero en un array.
 
--En la clase haremos la conexión a la DB y tambien, un list.
+get:
+  -Tendrá un id por parametro.
+  -Su query sería:
+    .SELECT * FROM [tabla] WHERE id=[id]
 
-remotemysql.com:
-  -Este sitio nos da una DB de pruebas.
-  -No pensado para producción.
-  -Al loggearnos, iremos a DB en el menú lateral.
-  -Ahí agregaremos una nueva, ahí nos dirá el host, username, password y nombre de la DB.
-    .El host será algo como: remotemysql.com
-  -Estas configuraciones debemos tenerlas en el archivo de config. y las tendremos igual
-    en variables de entorno.
+insert:
+  -Esta será una de las 2 funciones que pueden ser ejecutadas dentro de upsert.
+  -Query:
+    .INSERT INTO ${table} SET ?
+    .El '?' será la data.
 
-store:
-  -Vamos a crear un archivo nuevo en store, ya no usaremos dummy.
-  -Lo llamaremos 'mysql'.
-  -En el index de cada componente, ya no usaremos a dummy como store, sino a este.
+update:
+  -Esta será la otra que puede ejecutar el upsert.
+  -Query:
+    .UPDATE ${table} SET ? WHERE id=?
+    .El 1er ? será la data, el 2do el id que vendrá en esa data.
 
-mysql:
-  -Aquí realizaremos la conexión, y los metodos de las peticiones.
-  -Como este será el store usado por los controller, debemos exportar un objeto con cada
-    metodo.
-  -Debemos instalar e importar la dependencia 'mysql'.
-  -Tambien, tener en un objeto los datos de config. de conexión a la DB.
-  -Definiremos una variable global para la conexión.
+upsert:
+  -Esta tendrá un 3er parametro, isNew.
+  -Con el definiremos sí usar insert o update, dependiendo sí es o no nuevo.
 
-Funcion de conexión:
-  -A la variable de conexión le daremos como valor el metodo createConnection() de mysql,
-    que tendrá como parametro el objeto con la conf.
-  -De esa variable, usamos connect(), tiene un callback como parametro.
-  -Este callback se ejecutará sí hubo error, por eso lleva el error como parametro. Dentro
-    tendra lo que se hará en caso de error, y en caso de que no haya error.
-      .En caso de error, ejecutaremos dentro de 2s la misma función de conexión.
-  -Tambien de la conexión, usaremos on(), y lleva como parametros un strin con el tipo de
-    acción, y un callback.
-  -El tipo será 'error', y el callback llavará por parametro el error.
-    .Dentro del callback definiremos que sí se pierde la conexión, volvamos a ejecutar la
-      función de conexión. Para validar sí se perdió la conexión, tenemos el code del
-      error sería igual a "PROTOCOL_CONNECTION_LOST".
-    .En caso contrario, lanzamos el error que nos viene por parametro.
-  -La función de conexión la ejecutaremos en el hilo principal.
-
-Metodo list:
-  -Igual que antes, lleva por parametro el nombre de la tabla.
-  -Retornaremos una promesa.
-  -Realizaremos el metodo query() de la variable de conexión para hacer una consulta.
-  -Como parametros, lleva la consulta y una first error callback.
-  -Sí hay error, se rechaza la promesa, sino, la resolvemos con los datos traídos.
-  -La consulta llevará esta estructura para enlistar todos los datos de una tabla:
-    .'SELECT * FROM [nombre_tabla]'.
-
-Crear tabla:
-  .Para poder probar el enlistado, crearemos una tabla en remotemysql.
-  .En la DB creada > Action > Myphpadmin.
-  .Nos vendrá para colocar el nombre y los campos de una tabla, crearemos entonces user.
-  .Al crearla, nos dará para colocar los nombres y tipos de los campos:
-    .id: varchar de 32, y en el ultimo campo se coloca prymarykey, y 32 en el modal.
-    .username: varchar de 32.
-    .name: varchar de 64.
-  .Al terminar, agregaremos un dato para probar el enlistado, lo haremos en la pestaña
-    'insertar'.
+query:
+  -Para obtener el token.
+  -Query:
+    .SELECT * FROM ${table} WHERE ?
+    .? será el queryObject (2do param).
+  -Esta consulta retorna un array, de la cual, necesitamos solo la 1er posición.

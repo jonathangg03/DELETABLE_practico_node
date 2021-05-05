@@ -18,7 +18,15 @@ router.get("/:id", (req, res) => {
     .catch((err) => response.error(req, res, err.message, 500));
 });
 
+router.post("/follow/:id", secure("follow"), (req, res, next) => {
+  controller
+    .follow(req.user.id, req.params.id)
+    .then((data) => response.success(req, res, data, 201))
+    .catch(next);
+});
+
 router.post("/", (req, res) => {
+  console.log(req);
   controller
     .upsert(req.body)
     .then((data) => response.success(req, res, data, 201))

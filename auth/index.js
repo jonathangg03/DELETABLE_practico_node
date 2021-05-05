@@ -49,6 +49,12 @@ const check = {
       throw error("No puedes hacer esto", 401);
     }
   },
+  logged: function (req) {
+    const decoded = decodeHeader(req);
+    if (!decoded) {
+      throw error("No se ha autenticado");
+    }
+  },
 };
 
 module.exports = {

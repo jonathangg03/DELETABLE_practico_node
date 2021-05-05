@@ -1,24 +1,70 @@
-Gestión avanzada de errores: Throw
+Base de datos real: MySQL
 
--En muchas partes del código estamos 'Lanzando' errores.
--Al hacerlo, no estamos escogiendo un código para cada uno, sino que estamos
-  colocando el mismo para toodos.
--Para ello, crearemos en el network de la raíz un archivo 'errors', y otro 'error'
-  pero en la carpeta 'utils' de la raíz.
+-Vamos a colocar todos los error, quitando los 'new Error()' y colocando el metodo de las
+  utils.
+-Como estamos trayendo este midleware, en el network, en el error, ya no traeremos la 
+  respuesta, sino que colocaremos el next.
+-Next será el 3er parametro de la función de cada metodo, y es un elemento que tiene cada
+  middleware.
+-Se coloca este parametro, pero no como metodo.
+-Esto, como usamos un middleware, tenemos que hacerlo con todos los errores de los network.
 
-errors:
-  -Traemos response.
-  -Exportamos una función con los params: error, req, res.
-  -Hacemos el log al inicio sí se desea.
-  -Usamos el metodo de error de response, y damos valor, el mensaje y el estatus
-    lo sacamos del error del 1er param.
-  -Este elemento lo importamos en el index de la app, y lo servimos sin ruta, pero
-    al final de todas las rutas.
+-En la clase haremos la conexión a la DB y tambien, un list.
 
-error:
-  -Exportamos una función que tenga como params el mensaje y codigo de error.
-  -Retornamos una const, que tenga una instancia de la API Error de JS, y tenga
-    por parametro el mensaje.
-  -Le daremos a esa const, a su elemento code el codigo sí viene uno. 
-  -Este lo traemos en donde hayamos 'lanzado' errores, en lugar de lanzar 
-    'new Error', lanzamos este metodo, con el mensaje y el código deseados.
+remotemysql.com:
+  -Este sitio nos da una DB de pruebas.
+  -No pensado para producción.
+  -Al loggearnos, iremos a DB en el menú lateral.
+  -Ahí agregaremos una nueva, ahí nos dirá el host, username, password y nombre de la DB.
+    .El host será algo como: remotemysql.com
+  -Estas configuraciones debemos tenerlas en el archivo de config. y las tendremos igual
+    en variables de entorno.
+
+store:
+  -Vamos a crear un archivo nuevo en store, ya no usaremos dummy.
+  -Lo llamaremos 'mysql'.
+  -En el index de cada componente, ya no usaremos a dummy como store, sino a este.
+
+mysql:
+  -Aquí realizaremos la conexión, y los metodos de las peticiones.
+  -Como este será el store usado por los controller, debemos exportar un objeto con cada
+    metodo.
+  -Debemos instalar e importar la dependencia 'mysql'.
+  -Tambien, tener en un objeto los datos de config. de conexión a la DB.
+  -Definiremos una variable global para la conexión.
+
+Funcion de conexión:
+  -A la variable de conexión le daremos como valor el metodo createConnection() de mysql,
+    que tendrá como parametro el objeto con la conf.
+  -De esa variable, usamos connect(), tiene un callback como parametro.
+  -Este callback se ejecutará sí hubo error, por eso lleva el error como parametro. Dentro
+    tendra lo que se hará en caso de error, y en caso de que no haya error.
+      .En caso de error, ejecutaremos dentro de 2s la misma función de conexión.
+  -Tambien de la conexión, usaremos on(), y lleva como parametros un strin con el tipo de
+    acción, y un callback.
+  -El tipo será 'error', y el callback llavará por parametro el error.
+    .Dentro del callback definiremos que sí se pierde la conexión, volvamos a ejecutar la
+      función de conexión. Para validar sí se perdió la conexión, tenemos el code del
+      error sería igual a "PROTOCOL_CONNECTION_LOST".
+    .En caso contrario, lanzamos el error que nos viene por parametro.
+  -La función de conexión la ejecutaremos en el hilo principal.
+
+Metodo list:
+  -Igual que antes, lleva por parametro el nombre de la tabla.
+  -Retornaremos una promesa.
+  -Realizaremos el metodo query() de la variable de conexión para hacer una consulta.
+  -Como parametros, lleva la consulta y una first error callback.
+  -Sí hay error, se rechaza la promesa, sino, la resolvemos con los datos traídos.
+  -La consulta llevará esta estructura para enlistar todos los datos de una tabla:
+    .'SELECT * FROM [nombre_tabla]'.
+
+Crear tabla:
+  .Para poder probar el enlistado, crearemos una tabla en remotemysql.
+  .En la DB creada > Action > Myphpadmin.
+  .Nos vendrá para colocar el nombre y los campos de una tabla, crearemos entonces user.
+  .Al crearla, nos dará para colocar los nombres y tipos de los campos:
+    .id: varchar de 32, y en el ultimo campo se coloca prymarykey, y 32 en el modal.
+    .username: varchar de 32.
+    .name: varchar de 64.
+  .Al terminar, agregaremos un dato para probar el enlistado, lo haremos en la pestaña
+    'insertar'.

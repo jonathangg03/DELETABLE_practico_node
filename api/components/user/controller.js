@@ -50,6 +50,13 @@ module.exports = (injectedStore) => {
     );
   }
 
+  async function following(userId) {
+    const join = {};
+    join[TABLA] = "user_to"; //{{}}
+    const query = { user_from: userId };
+
+    return await store.query(TABLA + "_follow", query, join);
+  }
   // function remove(id) {
   //   return store.remove(TABLA, id);
   // }
@@ -59,6 +66,7 @@ module.exports = (injectedStore) => {
     get,
     upsert,
     follow,
+    following,
     // remove,
   };
 };

@@ -1,40 +1,37 @@
-Relacionando entidades: follow
+Posts y likes
 
--Sí nos acordamos, la relación entre user y follow será de n a n.
--En las relaciones de este tipo, lo mejor siempre es hacer una tabla intermedia.
--En este caso la llamaremos user_follow.
--La entidad afectada será el user.
-
-user_follow:
-  -No necesitamos Id.
-  -Los 2 campos serán user_from y user_to (usuario que sigue y seguido).
-  -Despues de crearlas, vamos a estructura, en crear un indicie, colocamos 2, y creamos un
-    indice en ambas columnas, que sea de 32.
-  -En ambos campos los valores que se colocarán son los ids de cada usuario (seguidor y seguido, o from y to).
+-Debemos completar el reto de colocar un id en la ruta y que nos devuleva ula info. de 
+  personas que siguen al usuario de ese id.
+-Para ello, se harán algunas cosas distintas.
 
 network:
-  -Lo haremos en un post.
-  -La ruta tendrá el id del usuario a seguir.
-  -Se llamará al middleware, pero la acción a hacer se llamará follow.
-  -La función a ejecutar del controller se llamará 'follow', y recibirá el id del usuario a seguir (en el 
-    params de la ruta), y el id del usuario que hace el follow.
-  -Para realizar esta acción debemos estar logueados y colocar la cabecera de autenticación. De ese logueo
-    vamos a sacar el id, se encuentra en 'req.user.id'.
+  -Usaremos el get, la ruta será '/:id/following'.
+  -El id que colocaremos en el metodo lo sacaremos de la ruta.
+  -El metodo del controller a usar será following, que crearemos.
 
 controller:
-  -Slamente haremos el upsert, pasandole los parametros necesarios.
-  -Recordar que el nombre de la tabla será user_follow.
+  -Traemos el id por parametro.
+  -Declaramos un objeto 'join' vacío por ahora.
+  -Al elemento 'user' de ese objeto, le damos como valor 'user_to'.
+  -Creamos otro objeto 'query', cuyo elemento user_from tenga como valor el id.
+  -Retornamos el metodo query, la tabla será user_follow (tabla creada anteriormente), y 
+    damos el query, y pasamos tambien el objeto join.
 
-secure:
-  -En está función, la acción será follow.
-  -Solo ejecutará la función 'logged' que definiremos en el objeto check.
-  -Le pasamos por param la req.
+mysql:
+  -Modificamos la función query para que reciba el join como 3er parametro.
+  -Creamos la variable 'joinQuery' con un string vacío.
+  -Sí pasamos el 3er parametro, le damos como valor a este el sigiente query:
+    .JOIN [key] ON [table].[val] = [key].id
+    .key: user.
+    .table: tabla de follow_user.
+    .val: user_to
+  -Retornaremos la promesa, pero el query quedará así:
+    .SELECT * FROM [tabla] [joinQuery] WHERE [table].?
+    .El ? quedaría igual.
 
-check.logged:
-  -Hará lo mismo, traemos la cabecera de autenticación.
-  -En caso de no venir, lanzamos un error.
-  -Por ahora igualmente solo logueamos la cabecera.
-
--Como estamos trallendo la cabecera de autenticación con el check.logged, traemos toda la info de a quien
-  pertenece esa cabecera, por eso es que podemos sacar el id de la persona que va a seguir (from) desde la
-  request.
+-Ahora vamos a crear la entidad 'post' para almacenar los post de cada usuario.
+-La tabla tendra:
+  .id: del post
+  .text: de tipo TEXT, sin un tamaño definido. Para agregar el contenido del post.
+  .user: Id del usuario que escribió el post.
+-Por ahora, usaremos solo el get, pero el reto es crear todos los demás metodos.

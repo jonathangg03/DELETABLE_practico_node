@@ -18,6 +18,13 @@ router.get("/:id", (req, res) => {
     .catch((err) => response.error(req, res, err.message, 500));
 });
 
+router.get("/:id/following", (req, res, next) => {
+  controller
+    .following(req.params.id)
+    .then((user) => response.success(req, res, user, 200))
+    .catch(next);
+});
+
 router.post("/follow/:id", secure("follow"), (req, res, next) => {
   controller
     .follow(req.user.id, req.params.id)

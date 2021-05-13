@@ -1,20 +1,41 @@
-Separando la base de datos a un microservicio
+Conectando con nuestro microservicio de datos
 
--El 1er microservicio que haremos será uno para la DB.
--Esto muchas veces no es necesario pero, es útil.
--Ahorita estamos consumiendo esta DB desde nuestro proyecto unicamente, pero podemos tener un microservicio que utilice
-  los metodos que ya hayamos creado para usar esta desde cualquier otra app, que nisiquiera debe ser de JS.
--Para crear un microservicio, crearemos una carpeta fuera de 'api'. En este caso la llamamos 'mysql'.
-  .Esta tendrá un index, que sería el equivalente a un index de la api, donde se creará la app de express.
-  .Tambien tendrémos un network, que será similar a los network que teniamos para cada entidad.
+-Lo que haremos en esta clase es que la entidad user no solicite datos directamente al store de la DB, sino, pedirá datos
+  a nuestro microservicio de 'mysql', que debemos tener corriendo en otra terminal.
+-Crearemos en el store 2 archivos, uno 'remote' y otro 'remoteMySql'. En 'remote' exportaremos una clase, y en el otro
+  exportaremos una instancia de esa clase. La entidad que desee pedir datos a la DB, ya no lo hara a al archivo de mysql,
+  sino a este 'remoteMySql', que es el que tendrá los distintos metodos que usaremos y es ahora el que hace la conexión.
+-Cuando corramos la api en la terminal, y usemos algun metodo desde su puerto, si queremos realizar peticiones a las DB
+  debemos tener corriendo en otro puerto el microservicio de la DB. Las peticiones se harán de forma normal, ya que el
+  index de la entidad lo estamos conectando a este microservicio.
+-Ahorá explicaremos la clase que tendrá el archivo remote. Antes, junto con el puerto, debemos tener el host dentro de
+  la config. que por defecto será localhost.
 
-index:
-  -Creamos la app de express.
-  -Debemos servir el router en la ruta raíz. El router será el archivo network. Servimos json sí lo usaremos.
-  -Escucharemos este archivo esto en un puerto nuevo, distinto al de la API.
+Class:
+  -Importaremos la dependencia 'request'. Debemos instalarla.
+  -La clase tendrá 2 params, el host y el puerto.
+  -Guardamos la dirección a la que nos conectaremos (usando este puerto y host).
+  -Definiremos cada metodo que los controller podrán usar, retornando la función req() que ahora vamos a definir.
+  -Cada función traerá la tabla por 1er parametro.
+  -La funcion req la definimos dentro de la misma clase
+  -Como la función req pide al menos el metodo http a usar y la tabla, el metodo se coloca con string y la tabla vendrá
+    por parametro.
 
-network:
-  -Como dijimos, será similar al que teníamos las otras entidades.
-  -Aquí usaremos directo los metodos del store de mysql que habíamos creado, por eso no usaremos el controller.
-  -A estos metodos hay que pasarles la tabla, en nuestro caso, la obtendremos de la ruta.
-  -El resto es igual.
+función req:
+  -Tendrá por params el metodo http, la tabla, y data en caso de ser necesaria para algunos metodos.
+  -Guardamos la ruta, pero aquí con la tabla incluída.
+  -Tendremos una const body, que por ahora será un string vacío.
+  -Retornaremos una promesa.
+  -Haremos el metodo request() (dependencia traída).
+  -El 1er param. será un objeto con todo lo necesario para una peticion http:
+    .Metodo (traído del parametro).
+    .Headers: Objeto, dentro tiene un elemento 'conent-type', con un valor 'application/json'.
+    .La ruta con la tabla.
+    .El body.
+  -El 2do param. será un callback que tendrá 3 parametros:
+    -El error, y dentro rechazamos la promesa con este error.
+    -La request, no usada por ahora.
+    -El cuerpo de la respuesta.
+  -El cuerpo de la respuesta vendrá en texto plano, que hay que pasar a formato json con JSON.parse().
+  -Ya en formato json, el elemento body de eso tendrá los datos traídos, con ese elemento body resolvemos la promesa.
+  -Finalmente, la clase retornará un objeto con cada metodo que esta tiene.

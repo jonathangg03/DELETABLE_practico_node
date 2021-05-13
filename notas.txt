@@ -1,37 +1,19 @@
-Posts y likes
+Microservicios: pros y contras
 
--Debemos completar el reto de colocar un id en la ruta y que nos devuleva ula info. de 
-  personas que siguen al usuario de ese id.
--Para ello, se harán algunas cosas distintas.
+Proyecto actual:
+  -Tenemos toda la api junta.
+  -Las instancias de nuestra api correrán todas juntas.
+  -Esto tiene el problema de que sí se cae el servició, todas las entidades dejan de funcionar.
+  -Otro problema, es que sí una entidad se utiliza mucho, habría que replicar todo el proyecto, no solo la entidad.
+  -Este problema lo solucionarán los microservicios.
 
-network:
-  -Usaremos el get, la ruta será '/:id/following'.
-  -El id que colocaremos en el metodo lo sacaremos de la ruta.
-  -El metodo del controller a usar será following, que crearemos.
+Microservicios:
+  -Tener cada entidad corriendo por separado.
+  -Esto tiene la ventaja de que no se caerán todos cuando uno falle, y cada una tendrá sus tareas por separado.
 
-controller:
-  -Traemos el id por parametro.
-  -Declaramos un objeto 'join' vacío por ahora.
-  -Al elemento 'user' de ese objeto, le damos como valor 'user_to'.
-  -Creamos otro objeto 'query', cuyo elemento user_from tenga como valor el id.
-  -Retornamos el metodo query, la tabla será user_follow (tabla creada anteriormente), y 
-    damos el query, y pasamos tambien el objeto join.
-
-mysql:
-  -Modificamos la función query para que reciba el join como 3er parametro.
-  -Creamos la variable 'joinQuery' con un string vacío.
-  -Sí pasamos el 3er parametro, le damos como valor a este el sigiente query:
-    .JOIN [key] ON [table].[val] = [key].id
-    .key: user.
-    .table: tabla de follow_user.
-    .val: user_to
-  -Retornaremos la promesa, pero el query quedará así:
-    .SELECT * FROM [tabla] [joinQuery] WHERE [table].?
-    .El ? quedaría igual.
-
--Ahora vamos a crear la entidad 'post' para almacenar los post de cada usuario.
--La tabla tendra:
-  .id: del post
-  .text: de tipo TEXT, sin un tamaño definido. Para agregar el contenido del post.
-  .user: Id del usuario que escribió el post.
--Por ahora, usaremos solo el get, pero el reto es crear todos los demás metodos.
+Desventajas:
+  -Algunas entidades requeriran de otras para funcionar.
+  -Hay cosas que pueden suceder que no nos daremos cuenta hasta producción, como la falta de alguna dependencia.
+  -Pueden llegar a ser demasiado complejos.
+  -Es recomendable que en principio no se piense en microservicios, que se haga de la forma que veníamos haciendo.
+  -Cuando ya lo hayamos decidido y tengamos todo desarrollado, ahí si podemos hacer microservicios.

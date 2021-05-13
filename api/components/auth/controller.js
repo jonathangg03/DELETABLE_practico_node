@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const auth = require("../../../auth");
+const error = require("../../../utils/error");
 const TABLA = "auth";
 module.exports = (injectedStore) => {
   let store = injectedStore;
@@ -12,15 +13,20 @@ module.exports = (injectedStore) => {
       username: username,
     });
 
-    return bcrypt.compare(password, data.password).then((sonIguales) => {
-      if (sonIguales === true) {
-        //Generar token
-        console.log("token");
-        return auth.sign({ ...data });
-      } else {
-        throw new Error("Info invalida");
-      }
-    });
+    console.log(password);
+    console.log(data.password);
+
+    return bcrypt
+      .compare(password || "", data.password || "")
+      .then((sonIguales) => {
+        if (sonIguales === true) {
+          //Generar token
+          console.log("token");
+          return auth.sign({ ...data });
+        } else {
+          throw error("Info invalida");
+        }
+      });
     //compare y sign ambos devuelven promesas
   }
 
@@ -36,7 +42,7 @@ module.exports = (injectedStore) => {
       authData.password = await bcrypt.hash(data.password, 5); //# de veces a repetir el algoritmo
     }
 
-    return store.upsert(TABLA, authData);
+    return store.upsert(TABLA, authData, true);
   }
 
   return {

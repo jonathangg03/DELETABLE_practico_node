@@ -95,7 +95,12 @@ function query(table, query, join) {
       query,
       (err, res) => {
         if (err) return reject(err);
-        resolve(res[0] || null); //Como resultado nos vendrá un array
+        if (joinQuery) {
+          resolve({ ...res } || null); //Como resultado nos vendrá un array
+        } else {
+          console.log("[res]: " + res);
+          resolve({ ...res[0] } || null); //Como resultado nos vendrá un array
+        }
       }
     );
   });

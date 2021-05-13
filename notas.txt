@@ -1,19 +1,20 @@
-Microservicios: pros y contras
+Separando la base de datos a un microservicio
 
-Proyecto actual:
-  -Tenemos toda la api junta.
-  -Las instancias de nuestra api correrán todas juntas.
-  -Esto tiene el problema de que sí se cae el servició, todas las entidades dejan de funcionar.
-  -Otro problema, es que sí una entidad se utiliza mucho, habría que replicar todo el proyecto, no solo la entidad.
-  -Este problema lo solucionarán los microservicios.
+-El 1er microservicio que haremos será uno para la DB.
+-Esto muchas veces no es necesario pero, es útil.
+-Ahorita estamos consumiendo esta DB desde nuestro proyecto unicamente, pero podemos tener un microservicio que utilice
+  los metodos que ya hayamos creado para usar esta desde cualquier otra app, que nisiquiera debe ser de JS.
+-Para crear un microservicio, crearemos una carpeta fuera de 'api'. En este caso la llamamos 'mysql'.
+  .Esta tendrá un index, que sería el equivalente a un index de la api, donde se creará la app de express.
+  .Tambien tendrémos un network, que será similar a los network que teniamos para cada entidad.
 
-Microservicios:
-  -Tener cada entidad corriendo por separado.
-  -Esto tiene la ventaja de que no se caerán todos cuando uno falle, y cada una tendrá sus tareas por separado.
+index:
+  -Creamos la app de express.
+  -Debemos servir el router en la ruta raíz. El router será el archivo network. Servimos json sí lo usaremos.
+  -Escucharemos este archivo esto en un puerto nuevo, distinto al de la API.
 
-Desventajas:
-  -Algunas entidades requeriran de otras para funcionar.
-  -Hay cosas que pueden suceder que no nos daremos cuenta hasta producción, como la falta de alguna dependencia.
-  -Pueden llegar a ser demasiado complejos.
-  -Es recomendable que en principio no se piense en microservicios, que se haga de la forma que veníamos haciendo.
-  -Cuando ya lo hayamos decidido y tengamos todo desarrollado, ahí si podemos hacer microservicios.
+network:
+  -Como dijimos, será similar al que teníamos las otras entidades.
+  -Aquí usaremos directo los metodos del store de mysql que habíamos creado, por eso no usaremos el controller.
+  -A estos metodos hay que pasarles la tabla, en nuestro caso, la obtendremos de la ruta.
+  -El resto es igual.

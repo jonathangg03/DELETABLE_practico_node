@@ -16,7 +16,7 @@ module.exports = (injectedStore) => {
     return store.get(TABLA, id);
   }
 
-  async function upsert(body) {
+  async function upsert(body, isNew) {
     const user = {
       name: body.name,
       username: body.username,
@@ -29,14 +29,17 @@ module.exports = (injectedStore) => {
     }
 
     if (body.password || body.username) {
-      await auth.upsert({
-        id: user.id,
-        username: user.username,
-        password: body.password,
-      });
+      await auth.upsert(
+        {
+          id: user.id,
+          username: user.username,
+          password: body.password,
+        },
+        isNew
+      );
     }
 
-    return store.upsert(TABLA, user, true);
+    return store.upsert(TABLA, user, isNew);
   }
 
   function follow(from, to) {

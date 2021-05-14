@@ -30,7 +30,7 @@ module.exports = (injectedStore) => {
     //compare y sign ambos devuelven promesas
   }
 
-  async function upsert(data) {
+  async function upsert(data, isNew) {
     const authData = {
       id: data.id,
     };
@@ -42,7 +42,9 @@ module.exports = (injectedStore) => {
       authData.password = await bcrypt.hash(data.password, 5); //# de veces a repetir el algoritmo
     }
 
-    return store.upsert(TABLA, authData, true);
+    console.log(authData);
+
+    return store.upsert(TABLA, authData, isNew);
   }
 
   return {

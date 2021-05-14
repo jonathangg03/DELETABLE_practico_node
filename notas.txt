@@ -1,22 +1,17 @@
-Separando los posts a un microservicio
+Gestión de microservicios con PM2
 
--Como habíamos dicho, tener un microservicio para cada cosa no es muy recomendable, por lo que, lo que haremos será
-  tener un servicio para la api, una para el cache (sí hay), una para la DB.
--Esto puede tener otro problema, y es que sí tenemos demasiadas entidades dentro de la API, estono suele ser lo
-  mejor, porque estamos sirviendo todo desde el mismo sitio.
--Lo que vamos a hacer es dentro de la api, servir microservicios de forma 'horizontal'.
--Siempre es bueno recordar que para separar todo esto, debemos tener clara la estructura que vamos a hacer, y
-  que esta tenga sentido.
--Lo que haremos será, en la api, tener los microservicios de user y auth, separado de la api, tendremos los microservicios de la DB,
-  y el de los post, que lo haremos en esta clase.
+-Supongamos que tenemos más de 20 microservicios corriendo, y uno se cae, como hacemos para saber cual esta fallando?
+-La herramienta que nos ayudará a gestionar nuestros microservicios en producción se llama PM2.
+-Con esta herramienta, tendremos corriendo los diferentes microservicios, y podremos gestionarlos, apagarlos, reiniciarlos, etc.
+-Lo instalaremos de manera global y requiere permisos de administrador.
 
-Posts:
-  -Creamos la carpeta para ese microservicio, tendrá un index y una carpeta components.
-  -Dentro de components, colocaremos completa la carpeta post que teniamos en los components de la API.
-  -Al hacer esto, en el index de la API, debemos borrar todo lo que haga referencia a los post.
-  -Ahora, en el index del microservicio de post, serviremos el componente post, en la misma ruta, y levantaremos 
-    en otro puerto distinto al de los anteriores.
-
-Importante:
-  -El store del componente seguirá siendo mysql, y no el microservicio de la DB.
-  -Es por esto que se llama 'horizontal', porque ataca directamente a la DB.
+Comandos:
+  .pm2 start [ruta_microserv] --name [nombre]: Corre un microservicio, hay que colocar la ruta hacia el index. Debemos colocar
+    nombre para evitar errores.
+  .pm2 status: Vemos el estado de los servicios que estamos corriendo.
+  .pm2 logs: Vemos los logs de todo lo que ha ido corriendo:
+    .Posiblemente, al haber iniciado servicios, nos muestre unas letras que indican una ruta para logs y para error-logs, esto
+      son archivos ocultos donde podremos dirigirnos con ctrl+click para ver el contenido de los archivos con esos logs.
+    .Podemos indicar ver solo los logs de un servicio en especifico sí seguido del comando colocamos el id del servicio.
+  .pm2 restart [id]: Reiniciamos un servicio.
+  -pm2 stop [id]: Apagamos un servicio.

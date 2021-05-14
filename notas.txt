@@ -1,41 +1,22 @@
-Conectando con nuestro microservicio de datos
+Separando los posts a un microservicio
 
--Lo que haremos en esta clase es que la entidad user no solicite datos directamente al store de la DB, sino, pedirá datos
-  a nuestro microservicio de 'mysql', que debemos tener corriendo en otra terminal.
--Crearemos en el store 2 archivos, uno 'remote' y otro 'remoteMySql'. En 'remote' exportaremos una clase, y en el otro
-  exportaremos una instancia de esa clase. La entidad que desee pedir datos a la DB, ya no lo hara a al archivo de mysql,
-  sino a este 'remoteMySql', que es el que tendrá los distintos metodos que usaremos y es ahora el que hace la conexión.
--Cuando corramos la api en la terminal, y usemos algun metodo desde su puerto, si queremos realizar peticiones a las DB
-  debemos tener corriendo en otro puerto el microservicio de la DB. Las peticiones se harán de forma normal, ya que el
-  index de la entidad lo estamos conectando a este microservicio.
--Ahorá explicaremos la clase que tendrá el archivo remote. Antes, junto con el puerto, debemos tener el host dentro de
-  la config. que por defecto será localhost.
+-Como habíamos dicho, tener un microservicio para cada cosa no es muy recomendable, por lo que, lo que haremos será
+  tener un servicio para la api, una para el cache (sí hay), una para la DB.
+-Esto puede tener otro problema, y es que sí tenemos demasiadas entidades dentro de la API, estono suele ser lo
+  mejor, porque estamos sirviendo todo desde el mismo sitio.
+-Lo que vamos a hacer es dentro de la api, servir microservicios de forma 'horizontal'.
+-Siempre es bueno recordar que para separar todo esto, debemos tener clara la estructura que vamos a hacer, y
+  que esta tenga sentido.
+-Lo que haremos será, en la api, tener los microservicios de user y auth, separado de la api, tendremos los microservicios de la DB,
+  y el de los post, que lo haremos en esta clase.
 
-Class:
-  -Importaremos la dependencia 'request'. Debemos instalarla.
-  -La clase tendrá 2 params, el host y el puerto.
-  -Guardamos la dirección a la que nos conectaremos (usando este puerto y host).
-  -Definiremos cada metodo que los controller podrán usar, retornando la función req() que ahora vamos a definir.
-  -Cada función traerá la tabla por 1er parametro.
-  -La funcion req la definimos dentro de la misma clase
-  -Como la función req pide al menos el metodo http a usar y la tabla, el metodo se coloca con string y la tabla vendrá
-    por parametro.
+Posts:
+  -Creamos la carpeta para ese microservicio, tendrá un index y una carpeta components.
+  -Dentro de components, colocaremos completa la carpeta post que teniamos en los components de la API.
+  -Al hacer esto, en el index de la API, debemos borrar todo lo que haga referencia a los post.
+  -Ahora, en el index del microservicio de post, serviremos el componente post, en la misma ruta, y levantaremos 
+    en otro puerto distinto al de los anteriores.
 
-función req:
-  -Tendrá por params el metodo http, la tabla, y data en caso de ser necesaria para algunos metodos.
-  -Guardamos la ruta, pero aquí con la tabla incluída.
-  -Tendremos una const body, que por ahora será un string vacío.
-  -Retornaremos una promesa.
-  -Haremos el metodo request() (dependencia traída).
-  -El 1er param. será un objeto con todo lo necesario para una peticion http:
-    .Metodo (traído del parametro).
-    .Headers: Objeto, dentro tiene un elemento 'conent-type', con un valor 'application/json'.
-    .La ruta con la tabla.
-    .El body.
-  -El 2do param. será un callback que tendrá 3 parametros:
-    -El error, y dentro rechazamos la promesa con este error.
-    -La request, no usada por ahora.
-    -El cuerpo de la respuesta.
-  -El cuerpo de la respuesta vendrá en texto plano, que hay que pasar a formato json con JSON.parse().
-  -Ya en formato json, el elemento body de eso tendrá los datos traídos, con ese elemento body resolvemos la promesa.
-  -Finalmente, la clase retornará un objeto con cada metodo que esta tiene.
+Importante:
+  -El store del componente seguirá siendo mysql, y no el microservicio de la DB.
+  -Es por esto que se llama 'horizontal', porque ataca directamente a la DB.

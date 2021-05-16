@@ -1,17 +1,9 @@
-Gestión de microservicios con PM2
+Notas para la resolución de los demás metodos
 
--Supongamos que tenemos más de 20 microservicios corriendo, y uno se cae, como hacemos para saber cual esta fallando?
--La herramienta que nos ayudará a gestionar nuestros microservicios en producción se llama PM2.
--Con esta herramienta, tendremos corriendo los diferentes microservicios, y podremos gestionarlos, apagarlos, reiniciarlos, etc.
--Lo instalaremos de manera global y requiere permisos de administrador.
+-En el remote, el metodo upsert llamara a otros metodos insert o update, dependiendo de un parametro que será un booleano.
 
-Comandos:
-  .pm2 start [ruta_microserv] --name [nombre]: Corre un microservicio, hay que colocar la ruta hacia el index. Debemos colocar
-    nombre para evitar errores.
-  .pm2 status: Vemos el estado de los servicios que estamos corriendo.
-  .pm2 logs: Vemos los logs de todo lo que ha ido corriendo:
-    .Posiblemente, al haber iniciado servicios, nos muestre unas letras que indican una ruta para logs y para error-logs, esto
-      son archivos ocultos donde podremos dirigirnos con ctrl+click para ver el contenido de los archivos con esos logs.
-    .Podemos indicar ver solo los logs de un servicio en especifico sí seguido del comando colocamos el id del servicio.
-  .pm2 restart [id]: Reiniciamos un servicio.
-  -pm2 stop [id]: Apagamos un servicio.
+-En el network del microservicio mysql debemos crear un metodo post, que llame a la ruta de login, e invoque el query
+  del store, donde le pasemos la tabla por parametro, junto que el elemento query del body, cuyo valor será un objeto con el username y su valor.
+
+-En la funcion query del remote, tendremos como parametro el query y join (query tendrá como valor 'username', y el
+  valor del username puesto en el body). Llamara a request, por metodo será POST, la ruta será la de la tabla, pero añadiendo la ruta /login, y un objeto con el query y el join (recordar que el join no se colocará valor aquí).

@@ -18,4 +18,5 @@ module.exports = {
     port: process.env.MYSQL_SRV_PORT || 3001,
     host: process.env.MYSQL_SRV_HOST || "localhost",
   },
+  remoteDB: process.env.REMOTE_DB || false,
 };

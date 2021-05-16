@@ -33,16 +33,15 @@ router.post("/follow/:id", secure("follow"), (req, res, next) => {
 });
 
 router.post("/", (req, res) => {
-  console.log(req);
   controller
-    .upsert(req.body)
+    .upsert(req.body, true)
     .then((data) => response.success(req, res, data, 201))
     .catch((err) => response.error(req, res, err.message, 500));
 });
 
 router.put("/", secure("update"), (req, res) => {
   controller
-    .upsert(req.body)
+    .upsert(req.body, false)
     .then((data) => response.success(req, res, data, 201))
     .catch((err) => response.error(req, res, err.message, 500));
 });

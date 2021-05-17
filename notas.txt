@@ -1,40 +1,25 @@
-Conectando el microservicio a Redis
+Conectar la API al caché
 
-Redislabs:
-  -Como nosotros no tenemos corriendo ningún servidor de redis (son pagos), usaremos Redislabs.
-  -Este nos provee un servicio con una DB gratuita para poder realizar nuestras pruebas.
-  -Ingresaremos al sitio y vamos a probar gratis.
-  -Gratuitamente solo nos dejará tener una DB.
-  -Sí ocupamos crear una, será en el menú superior izquierdo.
-  -En esta clase lo que probaremos es que se haga correctamente la conexión.
+-Ya tenemos creados los metodos para almacenar la cache en una DB.
+-En esta clase veremos como conectar ese servicio a la API.
+-Antes, como correremos esto en terminal, debemos fijarnos que en la confesten como antes las variables de entorno.
+-Ahorá, para conectar, afectaremos el index del user, y el controller, en los metodos de get, que es donde usaremos
+  estos (el get queda como reto, por ahora haremos el list).
 
-store de redis:
-  -Instalamos e importamos redis.
-  -Creamos un cliente:
-    .Una const tendrá como valor createClient() de redis, y como param. un objeto de conf.
-    .Este tiene como minimo: host, port, y password de nuestra DB de redis.
-    .Estos los conseguimos entrando a la DB de redis.
-    .Estos datos debemos tenerlos dentro de la conf.
-  -Crearemos los metodos que habíamos dicho que usaremos.
-  -Exportaremos un objeto con esos metodos.
+index:
+  -Haremos exactamente lo mismo que con el store, creamos una variable para el cache, donde sí el remoteDb de la
+    conf es verdadero, con la variable importamos a remoteMyCache, de lo contrario, importamos a redis.
+  -Al exportar el controller, colocaremos ese cache como 2do parametro.
 
-list:
-  -Llevará por parametro la tabla. La tabla igualmente la obtendremos de req.params.
-  -Retornaremos una promesa.
-  -Ejecutamos el metodo get() del cliente, llevara por parametro la tabla y un error first callback, que tiene como 2do
-    parametro la data.
-  -Sí hubo error, la rechazamos con el error.
-  -Resolveremos la promesa con la data, como nos vendrá como string, la pasamos a objeto con JSON.parse().
+controller:
+  -Como pasamos el cache como 2do parametro, dentro del controller realizaremos la misma validación que con el 
+    store, donde en caso de que no se coloque se usará dummy.
+  -NOTA: Por ahora usamos dummy, pero sí enviamos a producción, aquí debemos colocar una DB que nosotros tengamos.
+  -El metodo list() lo modificaremos para que haga lo siguiente:
+    .Traemos el metodo list de cache() a una variable.
+    .Sí esta no tiene respuesta, usamos el list del store,y eso lo retornaremos.
+    -En caso de que sí de respuesta, los datos traídos con el cache son los que retornaremos.
+  -Para ver el funcionamiento, logueamos algo en caso de que se trayeran datos de store o de cache, para ver cuando 
+    se hizo una u otra.
 
-upsert:
-  -Retornaremos una promesa.
-  -Ejecutaremos el metodo setex() del cliente, llevará como parametros un key, el tiempo en segundos en que se limpiará
-    la cache, y la data (del parametro) convertida a string con JSON.stringify().
-  -El key será la tabla, pero sí dentro de la data viene un id, al key le agregamos un '_[data.id]'.
-  -Resolveremos con true la promesa.
-
--Estos metodos son los que ejecuta el microservicio de cache.
--Para probar si funciona, añadimos en cualquier ruta de miscroservicio de cache algun dato (cualquiera), y lo 
-  revisaremos con un get, sí este dentro de1 10s lo volvemos a ver, pero ya no tiene info. está funcionando correctamente.
-
-  Contraseña DB redis: SR1sNH4XFMgFbw9356jjV0KVp14QdHWw
+-Debemos realizar el reto del get.

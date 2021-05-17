@@ -1,3 +1,35 @@
-Variables de entorno en Now y despliegue local
+Caché como un microservicio. Redis
 
--Para 
+Cache:
+  -El cache es una forma rápida de servir contenido que ya conocemos.
+  -Cuando hacemos una consulta por internet, esta viaja hasta el servidor, recoge los datos de la DB, y los retorna.
+  -La parte de recoger los datos de la DB suele ser muy lenta, principalmente cuando hay demasiados datos.
+  -Para ello, se crea la memoria cache, que guardará algunos datos, y el servidor primero consultará a la cache sí
+    tiene los datos buscados, en caso de que no los tenga, ahí sí revisa la DB.
+  -Añadiremos a todas las consultas que vayan a la DB un pequeño delay minimo, pero a cambio de eso, todas las que
+    ya se hayan hecho las guardaremos en una memora, y las contestaremos más rapido.
+  -La principal ventaja es reducir carga en la DB, que cuando hay mucho trafico es el 1er punto con problemas.
+  -La otra es que tendremos datos más facil, y sí esto se cae, no pasa nada porque la cache se limpia y se vuelve
+    a llenar.
+  -Lo haremos como un microservicio, con Redis.
+
+Redis:
+  -DB en memoria.
+  -Nos permite hacer todas las operaciones de la cache de forma sencilla.
+  -No tiene persistencia en disco, aunque se puede configurar.
+  -Nos permite hacer toda la gestión de cache automatica, y muy sencilla.
+  -Levantaremos un microservicio de datos similar al de mysql y poder acceder a el a traves de un archivo.
+
+-Acciones que podemos hacer al trabajar con cache:
+  -Añadir un archivo.
+  -Acceder a un archivo.
+  -Limpiar cache (eliminar el archivo). Este es mejor que suceda de forma automatica, aunque hay casos en que queramos 
+    hacerlo manual.
+  -Esto lo haremos con los metodos: list,get, y upsert. El insert y el update nos darán igual.
+
+-Como digimos, la composición de los archivos es similar a la de el servicio mysql, tendremos el index y el network,
+  donde la estructura del index es la misma.
+-Para el network tambien es similar, solo que el store a usar será uno llamado redis, y los metodos usados serán 
+  list, get y upsert, en los metodos get y put.
+-En el store agregaremos ahora un remoteCache, que igualmente exporte una instancia de remote.
+-Y crearemos un store 'redis', donde irán todos los metodos que usaremos de redis.

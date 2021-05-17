@@ -1,25 +1,25 @@
-Conectar la API al caché
+Desplegando los servicios de Node
 
--Ya tenemos creados los metodos para almacenar la cache en una DB.
--En esta clase veremos como conectar ese servicio a la API.
--Antes, como correremos esto en terminal, debemos fijarnos que en la confesten como antes las variables de entorno.
--Ahorá, para conectar, afectaremos el index del user, y el controller, en los metodos de get, que es donde usaremos
-  estos (el get queda como reto, por ahora haremos el list).
+-Ya tenemos la API corriendo en serverless, pero por algunas razones podríamos quererlo tener corriendo en una VM.
+-Como ejemplo, que algunos servicios no corran, o que necesitemos alguna conf. especifica.
 
-index:
-  -Haremos exactamente lo mismo que con el store, creamos una variable para el cache, donde sí el remoteDb de la
-    conf es verdadero, con la variable importamos a remoteMyCache, de lo contrario, importamos a redis.
-  -Al exportar el controller, colocaremos ese cache como 2do parametro.
+-Iremos a Google Cloud Platform, a la sección de Compute Engine > Instancias de VM.
+-Crearemos una instancia.
+-Al crearla, nos vamos al final, donde dice SSH, y damos click, nos abrirá una consola.
 
-controller:
-  -Como pasamos el cache como 2do parametro, dentro del controller realizaremos la misma validación que con el 
-    store, donde en caso de que no se coloque se usará dummy.
-  -NOTA: Por ahora usamos dummy, pero sí enviamos a producción, aquí debemos colocar una DB que nosotros tengamos.
-  -El metodo list() lo modificaremos para que haga lo siguiente:
-    .Traemos el metodo list de cache() a una variable.
-    .Sí esta no tiene respuesta, usamos el list del store,y eso lo retornaremos.
-    -En caso de que sí de respuesta, los datos traídos con el cache son los que retornaremos.
-  -Para ver el funcionamiento, logueamos algo en caso de que se trayeran datos de store o de cache, para ver cuando 
-    se hizo una u otra.
+En consola:
+  -Nos aseguramos que estemos en el home (cd ~).
+  -Descargamos e instalamos los paquetes de node:
+    .curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh: Nos descarga un script.
+    .sudo bash nodesource_setup.sh: Corremos ese script.
+  -Instalamos nodejs: sudo apt-get install -y nodejs
+  -Instalamos git: sudo apt-get install git.
+  -Instalamos pm2 global con npm.
+  -Clonamos nuestro repositorio de GH.
+  -Ingresamos a la carpeta clonada, e instalamos las dependencias.
+  -Añadimos todos los servicios a pm2.
 
--Debemos realizar el reto del get.
+-En este clase ya tenemos la api corriendo en la VM, en cada puerto, pero no lo podemos exponer todavía a internet,
+  porque no queremos exponer cada puerto con su ruta, sino que queremos exponer ciertos puertos, pero que vengan
+  directamente en la url que tengamos, en este caso la IP del servidor, pero sí tuvieramos el dominio, pues sería
+  ese. La mejor forma de hacer esto es con un proxy por delante, llamado NGINX.

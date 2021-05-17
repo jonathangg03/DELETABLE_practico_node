@@ -23,4 +23,11 @@ module.exports = {
     host: process.env.CACHE_SRV_HOST || "localhost",
   },
   remoteDB: process.env.REMOTE_DB || false,
+  redis: {
+    host:
+      process.env.REDIS_HOST ||
+      "redis-18442.c83.us-east-1-2.ec2.cloud.redislabs.com",
+    port: process.env.REDIS_PORT || "18442",
+    password: process.env.REDIS_PASSWORD || "SR1sNH4XFMgFbw9356jjV0KVp14QdHWw",
+  },
 };

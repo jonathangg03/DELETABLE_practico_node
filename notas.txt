@@ -1,35 +1,40 @@
-Caché como un microservicio. Redis
+Conectando el microservicio a Redis
 
-Cache:
-  -El cache es una forma rápida de servir contenido que ya conocemos.
-  -Cuando hacemos una consulta por internet, esta viaja hasta el servidor, recoge los datos de la DB, y los retorna.
-  -La parte de recoger los datos de la DB suele ser muy lenta, principalmente cuando hay demasiados datos.
-  -Para ello, se crea la memoria cache, que guardará algunos datos, y el servidor primero consultará a la cache sí
-    tiene los datos buscados, en caso de que no los tenga, ahí sí revisa la DB.
-  -Añadiremos a todas las consultas que vayan a la DB un pequeño delay minimo, pero a cambio de eso, todas las que
-    ya se hayan hecho las guardaremos en una memora, y las contestaremos más rapido.
-  -La principal ventaja es reducir carga en la DB, que cuando hay mucho trafico es el 1er punto con problemas.
-  -La otra es que tendremos datos más facil, y sí esto se cae, no pasa nada porque la cache se limpia y se vuelve
-    a llenar.
-  -Lo haremos como un microservicio, con Redis.
+Redislabs:
+  -Como nosotros no tenemos corriendo ningún servidor de redis (son pagos), usaremos Redislabs.
+  -Este nos provee un servicio con una DB gratuita para poder realizar nuestras pruebas.
+  -Ingresaremos al sitio y vamos a probar gratis.
+  -Gratuitamente solo nos dejará tener una DB.
+  -Sí ocupamos crear una, será en el menú superior izquierdo.
+  -En esta clase lo que probaremos es que se haga correctamente la conexión.
 
-Redis:
-  -DB en memoria.
-  -Nos permite hacer todas las operaciones de la cache de forma sencilla.
-  -No tiene persistencia en disco, aunque se puede configurar.
-  -Nos permite hacer toda la gestión de cache automatica, y muy sencilla.
-  -Levantaremos un microservicio de datos similar al de mysql y poder acceder a el a traves de un archivo.
+store de redis:
+  -Instalamos e importamos redis.
+  -Creamos un cliente:
+    .Una const tendrá como valor createClient() de redis, y como param. un objeto de conf.
+    .Este tiene como minimo: host, port, y password de nuestra DB de redis.
+    .Estos los conseguimos entrando a la DB de redis.
+    .Estos datos debemos tenerlos dentro de la conf.
+  -Crearemos los metodos que habíamos dicho que usaremos.
+  -Exportaremos un objeto con esos metodos.
 
--Acciones que podemos hacer al trabajar con cache:
-  -Añadir un archivo.
-  -Acceder a un archivo.
-  -Limpiar cache (eliminar el archivo). Este es mejor que suceda de forma automatica, aunque hay casos en que queramos 
-    hacerlo manual.
-  -Esto lo haremos con los metodos: list,get, y upsert. El insert y el update nos darán igual.
+list:
+  -Llevará por parametro la tabla. La tabla igualmente la obtendremos de req.params.
+  -Retornaremos una promesa.
+  -Ejecutamos el metodo get() del cliente, llevara por parametro la tabla y un error first callback, que tiene como 2do
+    parametro la data.
+  -Sí hubo error, la rechazamos con el error.
+  -Resolveremos la promesa con la data, como nos vendrá como string, la pasamos a objeto con JSON.parse().
 
--Como digimos, la composición de los archivos es similar a la de el servicio mysql, tendremos el index y el network,
-  donde la estructura del index es la misma.
--Para el network tambien es similar, solo que el store a usar será uno llamado redis, y los metodos usados serán 
-  list, get y upsert, en los metodos get y put.
--En el store agregaremos ahora un remoteCache, que igualmente exporte una instancia de remote.
--Y crearemos un store 'redis', donde irán todos los metodos que usaremos de redis.
+upsert:
+  -Retornaremos una promesa.
+  -Ejecutaremos el metodo setex() del cliente, llevará como parametros un key, el tiempo en segundos en que se limpiará
+    la cache, y la data (del parametro) convertida a string con JSON.stringify().
+  -El key será la tabla, pero sí dentro de la data viene un id, al key le agregamos un '_[data.id]'.
+  -Resolveremos con true la promesa.
+
+-Estos metodos son los que ejecuta el microservicio de cache.
+-Para probar si funciona, añadimos en cualquier ruta de miscroservicio de cache algun dato (cualquiera), y lo 
+  revisaremos con un get, sí este dentro de1 10s lo volvemos a ver, pero ya no tiene info. está funcionando correctamente.
+
+  Contraseña DB redis: SR1sNH4XFMgFbw9356jjV0KVp14QdHWw

@@ -9,7 +9,7 @@ module.exports = {
     secret: process.env.JWT_SECRET || "notasecret",
   },
   mysql: {
-    host: process.env.MYSQL_HOST || "remotemysql.com",
+    host: process.env.MYSQL_HOST || "",
     user: process.env.MYSQL_USER || "uP4Y9tRU5j",
     password: process.env.MYSQL_PASS || "LQNzJtXQ0g",
     database: process.env.MYSQL_DB || "uP4Y9tRU5j",

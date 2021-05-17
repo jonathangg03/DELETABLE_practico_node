@@ -1,9 +1,3 @@
-Notas para la resolución de los demás metodos
+Variables de entorno en Now y despliegue local
 
--En el remote, el metodo upsert llamara a otros metodos insert o update, dependiendo de un parametro que será un booleano.
-
--En el network del microservicio mysql debemos crear un metodo post, que llame a la ruta de login, e invoque el query
-  del store, donde le pasemos la tabla por parametro, junto que el elemento query del body, cuyo valor será un objeto con el username y su valor.
-
--En la funcion query del remote, tendremos como parametro el query y join (query tendrá como valor 'username', y el
-  valor del username puesto en el body). Llamara a request, por metodo será POST, la ruta será la de la tabla, pero añadiendo la ruta /login, y un objeto con el query y el join (recordar que el join no se colocará valor aquí).
+-Para 

@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const auth = require("../../../auth");
 const error = require("../../../utils/error");
 const TABLA = "auth";
